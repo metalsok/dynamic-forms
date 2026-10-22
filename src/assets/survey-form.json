@@ -1,0 +1,73 @@
+{
+  "description": "Survey form",
+  "controls": {
+    "satisfaction": {
+      "controlType": "select",
+      "label": "Satisfaction Level",
+      "value": null,
+      "options": [
+        {
+          "label": "Very Satisfied",
+          "value": "very_satisfied"
+        },
+        {
+          "label": "Satisfied",
+          "value": "satisfied"
+        },
+        {
+          "label": "Neutral",
+          "value": "neutral"
+        },
+        {
+          "label": "Dissatisfied",
+          "value": "dissatisfied"
+        },
+        {
+          "label": "Very Dissatisfied",
+          "value": "very_dissatisfied"
+        }
+      ]
+    },
+    "comments": {
+      "controlType": "textarea",
+      "label": "Additional Comments",
+      "value": null,
+      "rows": 4,
+      "placeholder": "Tell us about your experience",
+      "validators": {
+        "maxLength": 500
+      }
+    },
+    "recommend": {
+      "controlType": "radio",
+      "label": "Would you recommend us?",
+      "value": null,
+      "validators": {
+        "required": true
+      },
+      "options": [
+        {
+          "label": "Yes",
+          "value": "yes"
+        },
+        {
+          "label": "No",
+          "value": "no"
+        }
+      ]
+    },
+    "visits": {
+      "controlType": "number",
+      "label": "Number of visits",
+      "value": 1,
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "validators": {
+        "required": true,
+        "min": 1,
+        "max": 100
+      }
+    }
+  }
+}

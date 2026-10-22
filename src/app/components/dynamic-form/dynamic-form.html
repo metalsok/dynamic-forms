@@ -1,0 +1,25 @@
+<div class="flex gap-4 w-full p-6">
+  <div class="flex flex-col gap-4 w-64">
+    <button (click)="formLoadingTrigger.next(FormTypes.REGISTRATION)"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type="button">Load
+      registration form
+    </button>
+    <button (click)="formLoadingTrigger.next(FormTypes.SURVEY)"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Load survey form
+    </button>
+  </div>
+  @if (formConfig$|async; as formConfig) {
+    <form [formGroup]="formConfig.form" class="bg-white shadow-md rounded p-4">
+      <h2 class="font-bold 4xl mb-4">{{ formConfig.config.description }}</h2>
+      @for (control of formConfig.config.controls | keyvalue:null; track control.key) {
+        <ng-container [ngComponentOutlet]="controlResolver.resolve(control.value.controlType) | async"
+                      [ngComponentOutletInputs]="{ controlKey: control.key, config: control.value }"
+        ></ng-container>
+      }
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+              [class.bg-gray-200]="formConfig.form.invalid">
+        Save
+      </button>
+    </form>
+  }
+</div>
