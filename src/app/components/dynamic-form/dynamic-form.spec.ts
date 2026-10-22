@@ -1,5 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -14,17 +14,15 @@ describe('Dynamic form input bindings', () => {
       imports: [DynamicForm],
       providers: [
         provideZonelessChangeDetection(),
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(DynamicForm);
     const http = TestBed.inject(HttpTestingController);
-    fixture.detectChanges();
-    http.expectOne('assets/survey-form.json').flush(survey);
+    await vi.waitFor(() => http.expectOne('assets/survey-form.json').flush(survey));
     await fixture.whenStable();
-    fixture.detectChanges();
 
     const getForm = () => fixture.debugElement.query(By.directive(FormGroupDirective))
       .injector.get(FormGroupDirective).form;
@@ -37,7 +35,7 @@ describe('Dynamic form input bindings', () => {
     comments.dispatchEvent(new Event('input'));
     expect(surveyForm.get('comments')?.value).toBe('Great service');
     surveyForm.get('comments')?.setValue('x'.repeat(501));
-    expect(surveyForm.get('comments')?.hasError('maxlength')).toBeTrue();
+    expect(surveyForm.get('comments')?.hasError('maxlength')).toBe(true);
     surveyForm.get('comments')?.setValue('Great service');
 
     const visits = fixture.nativeElement.querySelector('input[type="number"]') as HTMLInputElement;
@@ -46,32 +44,31 @@ describe('Dynamic form input bindings', () => {
     visits.dispatchEvent(new Event('input'));
     expect(surveyForm.get('visits')?.value).toBe(3);
     surveyForm.get('visits')?.setValue(0);
-    expect(surveyForm.get('visits')?.hasError('min')).toBeTrue();
+    expect(surveyForm.get('visits')?.hasError('min')).toBe(true);
     surveyForm.get('visits')?.setValue(101);
-    expect(surveyForm.get('visits')?.hasError('max')).toBeTrue();
+    expect(surveyForm.get('visits')?.hasError('max')).toBe(true);
     surveyForm.get('visits')?.setValue(3);
 
     const recommendation = fixture.nativeElement.querySelector('input[type="radio"]') as HTMLInputElement;
-    expect(surveyForm.get('recommend')?.hasError('required')).toBeTrue();
+    expect(surveyForm.get('recommend')?.hasError('required')).toBe(true);
     recommendation.click();
     expect(surveyForm.get('recommend')?.value).toBe('yes');
-    expect(surveyForm.valid).toBeTrue();
+    expect(surveyForm.valid).toBe(true);
 
     fixture.componentInstance.formLoadingTrigger.next(FormTypes.REGISTRATION);
     http.expectOne('assets/registration-form.json').flush(registration);
     await fixture.whenStable();
-    fixture.detectChanges();
 
     const form = getForm();
     expect(form.get('socialMediaAccounts.youtube')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('input[id="youtube"]')).toBeTruthy();
-    expect(form.invalid).toBeTrue();
+    expect(form.invalid).toBe(true);
     form.patchValue({ username: 'ab', email: 'invalid', role: 'admin', terms: false });
-    expect(form.get('username')?.hasError('minlength')).toBeTrue();
-    expect(form.get('email')?.hasError('email')).toBeTrue();
-    expect(form.get('terms')?.hasError('required')).toBeTrue();
+    expect(form.get('username')?.hasError('minlength')).toBe(true);
+    expect(form.get('email')?.hasError('email')).toBe(true);
+    expect(form.get('terms')?.hasError('required')).toBe(true);
     form.patchValue({ username: 'alice', email: 'alice@example.com', terms: true });
-    expect(form.valid).toBeTrue();
+    expect(form.valid).toBe(true);
 
     const username = fixture.nativeElement.querySelector('input[id="username"]') as HTMLInputElement;
     username.value = 'bob';
@@ -81,7 +78,6 @@ describe('Dynamic form input bindings', () => {
     fixture.componentInstance.formLoadingTrigger.next(FormTypes.SURVEY);
     http.expectOne('assets/survey-form.json').flush(survey);
     await fixture.whenStable();
-    fixture.detectChanges();
     expect(Object.keys(getForm().controls)).toEqual(['satisfaction', 'comments', 'recommend', 'visits']);
     expect(fixture.nativeElement.querySelector('input[id="youtube"]')).toBeNull();
     http.verify();

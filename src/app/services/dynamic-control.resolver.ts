@@ -1,6 +1,7 @@
-import {Injectable, Type} from '@angular/core';
+import {Injectable, Injector, inject, Type} from '@angular/core';
 import {DynamicControl} from '../models/dynamic-forms.model';
-import {from, of, tap} from 'rxjs';
+import {defer, Observable, shareReplay} from 'rxjs';
+import {pendingUntilEvent} from '@angular/core/rxjs-interop';
 
 type DynamicControlsMap = { [T in DynamicControl['controlType']]: () => Promise<Type<any>> };
 
@@ -19,15 +20,19 @@ export class DynamicControlResolver {
    // array:()=>import('')
   }
 
-  private loadedControlComponents = new Map<string, Type<any>>()
+  private readonly injector = inject(Injector);
+  private readonly loadedControlComponents = new Map<string, Observable<Type<any>>>();
 
-  public resolve(controlType: keyof DynamicControlsMap) {
-    const loadedComponent = this.loadedControlComponents.get(controlType)
-
-    if (loadedComponent) return of(loadedComponent)
-
-
-    return from(this.lazyControlComponents[controlType]()).pipe(tap(component => this.loadedControlComponents.set(controlType, component)))
+  public resolve(controlType: keyof DynamicControlsMap): Observable<Type<any>> {
+    let component = this.loadedControlComponents.get(controlType);
+    if (!component) {
+      component = defer(this.lazyControlComponents[controlType]).pipe(
+        // Include lazy imports in Angular's zoneless stability tracking.
+        pendingUntilEvent(this.injector),
+        shareReplay({bufferSize: 1, refCount: false}),
+      );
+      this.loadedControlComponents.set(controlType, component);
+    }
+    return component;
   }
-
 }

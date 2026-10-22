@@ -2,7 +2,7 @@
 
 An Angular demo that builds reactive forms from JSON, with lazy-loaded field components and validation.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.2.
+Built with Angular 22.2.3 and TypeScript 6.0.3. Use Node.js 24.19.0 (`nvm use`) or another version supported by the `engines` field in `package.json`.
 
 ## Development server
 
@@ -40,11 +40,13 @@ This will compile your project and store the build artifacts in the `dist/` dire
 
 ## Running unit tests
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Tests use Vitest and jsdom, including the JSON-driven form integration test. To run them once:
 
 ```bash
-ng test
+npm test -- --watch=false
 ```
+
+Use `npm test -- --watch` to rerun tests while editing.
 
 ## Running end-to-end tests
 

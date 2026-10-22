@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {DynamicBaseClass, dynamicControlProvider} from '../dynamic-base.class';
 import {ReactiveFormsModule} from '@angular/forms';
 
@@ -6,6 +6,7 @@ import {ReactiveFormsModule} from '@angular/forms';
   selector: 'app-dynamic-checkbox-control',
   imports: [ReactiveFormsModule],
   viewProviders: [dynamicControlProvider],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template:`
     <div class="flex gap-2 ">
       <input type="checkbox" [formControlName]="controlKey()" [checked]="config().value">

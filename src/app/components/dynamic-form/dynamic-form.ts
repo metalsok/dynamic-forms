@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {DynamicFormService} from '../../services/dynamic-form.service';
 import {DynamicFormsConfig} from '../../models/dynamic-forms.model';
 import {map, Observable, Subject, switchMap} from 'rxjs';
@@ -20,6 +20,7 @@ export enum FormTypes {
     NgComponentOutlet,
   ],
   templateUrl: './dynamic-form.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [DynamicFormService]
 })
 export class DynamicForm implements OnInit, AfterViewInit {

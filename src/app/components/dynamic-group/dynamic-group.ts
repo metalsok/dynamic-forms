@@ -1,4 +1,4 @@
-import {Component, HostBinding, inject} from '@angular/core';
+import {Component, HostBinding, inject, ChangeDetectionStrategy} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {DynamicBaseClass, dynamicControlProvider} from '../dynamic-base.class';
 import {AsyncPipe, KeyValuePipe, NgComponentOutlet} from '@angular/common';
@@ -13,6 +13,7 @@ import {DynamicControlResolver} from '../../services/dynamic-control.resolver';
     AsyncPipe,
   ],
   viewProviders: [dynamicControlProvider],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <fieldset [formGroupName]="controlKey()" class="p-4 border border-gray-400 rounded bg-gray-50">
       <legend>{{ config().label }}</legend>

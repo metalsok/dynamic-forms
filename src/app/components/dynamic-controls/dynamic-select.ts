@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DynamicBaseClass, dynamicControlProvider} from '../dynamic-base.class';
 
@@ -9,6 +9,7 @@ import {DynamicBaseClass, dynamicControlProvider} from '../dynamic-base.class';
     ReactiveFormsModule
   ],
   viewProviders: [dynamicControlProvider],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <label class="block text-gray-700 text-sm font-bold mb-2"
            [for]="controlKey()">{{ config().label }}</label>
